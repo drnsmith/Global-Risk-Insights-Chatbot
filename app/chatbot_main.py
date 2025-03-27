@@ -1,7 +1,12 @@
-import duckdb
-from fastapi import FastAPI, Request
+mport duckdb
+from fastapi import FastAPI
 from pydantic import BaseModel
 from chatbot_logic import generate_response
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
