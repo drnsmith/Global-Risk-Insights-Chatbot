@@ -1,31 +1,29 @@
-
 import duckdb
-import os
-from datetime import datetime
 
-# Set up or connect to local DuckDB file
-DB_FILE = "chat_history.duckdb"
-con = duckdb.connect(DB_FILE)
+# Persistent local database file (can change path if needed)
+DB_PATH = "data/conversations.db"
 
-# Create a table for storing chats
-def setup_db():
-    con.execute("""
-        CREATE TABLE IF NOT EXISTS chat_log (
-            timestamp TIMESTAMP,
-            sender TEXT,
-            message TEXT
-        )
-    """)
+# Establish a connection to the DuckDB database file
+con = duckdb.connect(database=DB_PATH)
 
-# Add a message to the log
+# Ensure the table exists
+con.execute("""
+    CREATE TABLE IF NOT EXISTS conversations (
+        id INTEGER AUTOINCREMENT,
+        sender TEXT,
+        message TEXT
+    );
+""")
+
 def log_message(sender: str, message: str):
-    timestamp = datetime.now()
-    con.execute("INSERT INTO chat_log VALUES (?, ?, ?)", (timestamp, sender, message))
+    """Logs a message (user or bot) to the DuckDB database."""
+    con.execute(
+        "INSERT INTO conversations (sender, message) VALUES (?, ?);",
+        (sender, message)
+    )
 
-# Retrieve entire chat history
 def get_chat_history():
-    result = con.execute("SELECT * FROM chat_log ORDER BY timestamp").fetchall()
-    return result
-
-# Call setup_db once at import
-setup_db()
+    """Retrieves all conversation history from the database."""
+    return con.execute(
+        "SELECT * FROM conversations ORDER BY id ASC;"
+    ).fetchall()
