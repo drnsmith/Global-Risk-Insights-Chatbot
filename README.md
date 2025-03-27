@@ -1,5 +1,5 @@
 # AI Retail Chatbot with Embedded Analytics
-![Project Banner](/.assets/image.png)
+![Project Banner](./assets/image.png)
 
 This project is an AI-powered chatbot that answers business questions about retail performance using structured data (loaded via **DuckDB**) and natural language queries powered by a language model.
 
