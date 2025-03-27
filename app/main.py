@@ -3,9 +3,13 @@ from dotenv import load_dotenv
 from duckdb_handler import log_message, get_chat_history
 import openai
 
+# Load environment variables
 load_dotenv()
 
+# Ensure API key is available
 openai.api_key = os.getenv("OPENAI_API_KEY")
+if not openai.api_key:
+    raise ValueError("Missing OpenAI API key. Please set OPENAI_API_KEY in your .env file.")
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant designed to support customers of a retail store. "
