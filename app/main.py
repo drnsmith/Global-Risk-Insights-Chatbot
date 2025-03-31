@@ -42,7 +42,8 @@ def generate_response(user_input: str) -> str:
         reply = f"Oops! Something went wrong: {str(e)}"
     
     return reply
-
+from duckdb_handler import clear_chat_history
+clear_chat_history()
 def chat():
     print("GlobalRiskBot: Hello! How can I assist you with global risk insights today?\n")
     
