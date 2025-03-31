@@ -36,3 +36,6 @@ def log_message(role: str, message: str):
         "INSERT INTO conversations (id, role, message) VALUES (?, ?, ?)",
         (next_id, role.lower(), message)
     )
+
+def clear_chat_history():
+    con.execute("DELETE FROM conversations;")
