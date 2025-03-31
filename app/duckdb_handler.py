@@ -1,9 +1,12 @@
 import duckdb
 
-# Connect to DuckDB in-memory (change ':memory:' to a file path for persistence)
-con = duckdb.connect(database=':memory:')
+# Define the path for persistence
+DB_PATH = "data/conversations.db"
 
-# Create the conversations table if it doesn't exist
+# Connect to DuckDB using the persistent file
+con = duckdb.connect(database=DB_PATH)
+
+# Create the conversations table without AUTOINCREMENT
 con.execute("""
     CREATE TABLE IF NOT EXISTS conversations (
         id INTEGER,
@@ -15,13 +18,12 @@ con.execute("""
 def get_chat_history(limit=5):
     """
     Retrieve the last 'limit' conversation entries from the DuckDB table.
-    Returns the records in chronological order.
+    Returns records in chronological order.
     """
     result = con.execute(
         f"SELECT * FROM conversations ORDER BY id DESC LIMIT {limit}"
     ).fetchall()
-    # Reverse to return messages in the order they were added
-    return result[::-1]
+    return result[::-1]  # Reverse to get chronological order
 
 def log_message(role: str, message: str):
     """
