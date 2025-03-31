@@ -86,6 +86,6 @@ def on_submit(change):
 
     with output_box:
         print(f"You: {user_input}")
-        print(f"RetailBot: {response}\n")
+        print(f"GlobalRiskBot: {response}\n")
 
 input_box.on_submit(on_submit)
