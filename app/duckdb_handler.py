@@ -1,29 +1,36 @@
 import duckdb
 
-# Persistent local database file (can change path if needed)
-DB_PATH = "data/conversations.db"
+# Connect to DuckDB in-memory (change ':memory:' to a file path for persistence)
+con = duckdb.connect(database=':memory:')
 
-# Establish a connection to the DuckDB database file
-con = duckdb.connect(database=DB_PATH)
-
-# Ensure the table exists
+# Create the conversations table if it doesn't exist
 con.execute("""
     CREATE TABLE IF NOT EXISTS conversations (
-        id INTEGER AUTOINCREMENT,
-        sender TEXT,
+        id INTEGER,
+        role TEXT,
         message TEXT
     );
 """)
 
-def log_message(sender: str, message: str):
-    """Logs a message (user or bot) to the DuckDB database."""
-    con.execute(
-        "INSERT INTO conversations (sender, message) VALUES (?, ?);",
-        (sender, message)
-    )
-
-def get_chat_history():
-    """Retrieves all conversation history from the database."""
-    return con.execute(
-        "SELECT * FROM conversations ORDER BY id ASC;"
+def get_chat_history(limit=5):
+    """
+    Retrieve the last 'limit' conversation entries from the DuckDB table.
+    Returns the records in chronological order.
+    """
+    result = con.execute(
+        f"SELECT * FROM conversations ORDER BY id DESC LIMIT {limit}"
     ).fetchall()
+    # Reverse to return messages in the order they were added
+    return result[::-1]
+
+def log_message(role: str, message: str):
+    """
+    Log a message to the conversations table.
+    'role' should be either 'user' or 'assistant'.
+    """
+    last_id = con.execute("SELECT MAX(id) FROM conversations").fetchone()[0]
+    next_id = 1 if last_id is None else last_id + 1
+    con.execute(
+        "INSERT INTO conversations (id, role, message) VALUES (?, ?, ?)",
+        (next_id, role.lower(), message)
+    )
