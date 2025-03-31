@@ -11,9 +11,10 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 if not openai.api_key:
     raise ValueError("Missing OpenAI API key. Please set OPENAI_API_KEY in your .env file.")
 
+# Updated system prompt for Global Risk Insights Chatbot
 SYSTEM_PROMPT = (
-    "You are a helpful assistant designed to support customers of a retail store. "
-    "Provide clear, friendly responses based on user queries."
+    "You are a helpful assistant designed to support users with global risk and international business insights. "
+    "Provide clear, concise, and friendly responses based on user queries about risk and market trends."
 )
 
 def generate_response(user_input: str) -> str:
@@ -21,14 +22,15 @@ def generate_response(user_input: str) -> str:
     chat_history = get_chat_history()
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     
-    for row in chat_history[-5:]:  # Use last 5 interactions for brevity
+    # Use the last 5 interactions for context
+    for row in chat_history[-5:]:
         sender, message = row[1], row[2]
         role = "user" if sender == "user" else "assistant"
         messages.append({"role": role, "content": message})
     
     messages.append({"role": "user", "content": user_input})
     
-    # Call OpenAI API
+    # Call OpenAI API to generate a response
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",
@@ -42,18 +44,18 @@ def generate_response(user_input: str) -> str:
     return reply
 
 def chat():
-    print("RetailBot: Hello! How can I assist you today?\n")
+    print("GlobalRiskBot: Hello! How can I assist you with global risk insights today?\n")
     
     while True:
         user_input = input("You: ")
         if user_input.lower() in ['exit', 'quit']:
-            print("RetailBot: Goodbye!")
+            print("GlobalRiskBot: Goodbye!")
             break
         
         log_message("user", user_input)
         response = generate_response(user_input)
         log_message("bot", response)
-        print(f"RetailBot: {response}\n")
+        print(f"GlobalRiskBot: {response}\n")
 
 if __name__ == "__main__":
     chat()
