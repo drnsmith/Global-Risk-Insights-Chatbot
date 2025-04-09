@@ -56,13 +56,25 @@ python app/main.py
 ```bash
 global-risk-insights-chatbot/
 ├── app/
-│   ├── main.py          # Main entry point for the chatbot
-│   ├── chatbot.py       # Chatbot logic and conversation management
-│   └── db.py            # DuckDB integration and query functions
-├── .env                 # Environment variables (not tracked by Git)
-├── .gitignore           # Files and directories to ignore in Git
-├── requirements.txt     # Python dependencies
-└── README.md            # This file
+│   ├── main.py
+│   ├── chatbot_main.py
+│   ├── chatbot_logic.py
+│   ├── duckdb_handler.py
+│   ├── dashboard.py
+│   ├── dashboard_world_bank.py
+├── data/
+│   ├── world_bank.duckdb
+│   ├── chat_history.duckdb
+├── scripts/
+│   ├── transparency_scraper.py
+│   ├── world_bank_cleaning.py (if needed)
+├── assets/
+│   └── (any visuals or docs)
+├── .env
+├── .gitignore
+├── LICENSE
+├── README.md
+├── requirements.txt
 ```
 ### Future Enhancements
 	•	Advanced AI Capabilities:
