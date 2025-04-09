@@ -1,18 +1,14 @@
-mport duckdb
+import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 from chatbot_logic import generate_response
+from duckdb_handler import log_message, get_chat_history
 from dotenv import load_dotenv
-import os
 
 # Load environment variables
 load_dotenv()
 
 app = FastAPI()
-
-# Sample DuckDB in-memory database
-con = duckdb.connect(database=':memory:')
-con.execute("CREATE TABLE conversations (id INTEGER, user_input TEXT, bot_response TEXT);")
 
 class UserInput(BaseModel):
     message: str
@@ -20,14 +16,20 @@ class UserInput(BaseModel):
 @app.post("/chat")
 def chat(user_input: UserInput):
     user_msg = user_input.message
+
+    # Log user input
+    log_message("user", user_msg)
+
+    # Generate bot response
     bot_msg = generate_response(user_msg)
 
-    # Save to database
-    con.execute("INSERT INTO conversations VALUES (?, ?, ?);", (1, user_msg, bot_msg))
+    # Log bot response
+    log_message("bot", bot_msg)
 
     return {"response": bot_msg}
 
 @app.get("/history")
 def get_conversation():
-    result = con.execute("SELECT * FROM conversations;").fetchall()
-    return {"conversations": result}
+    history = get_chat_history()
+    formatted = [{"role": row[1], "message": row[2]} for row in history]
+    return {"conversations": formatted}
